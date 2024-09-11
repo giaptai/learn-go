@@ -18,7 +18,7 @@ func GetFirms(c *gin.Context) {
 	c.JSON(http.StatusOK, firms)
 }
 
-func GetFirmBMyId(c *gin.Context) {
+func GetFirmById(c *gin.Context) {
 	id := c.Param("id") //get path variable
 	var intInt int
 	var firm models.VWFirm
@@ -31,7 +31,6 @@ func GetFirmBMyId(c *gin.Context) {
 	if err != nil {
 		fmt.Println(err.Error())
 	}
-
 	c.JSON(http.StatusOK, firm)
 }
 
