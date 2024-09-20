@@ -8,7 +8,7 @@ import (
 func GetRegions() ([]models.Region, error) {
 	var regions []models.Region
 	query := "SELECT id, name, description FROM region"
-	rows, err := connectdb.ConnMySql().Query(query)
+	rows, err := connectdb.Db.Query(query)
 	if err != nil {
 		return nil, err
 	}
@@ -28,7 +28,7 @@ func GetRegions() ([]models.Region, error) {
 
 func InsertRegion(region *models.Region) (*models.Region, error) {
 	query := "INSERT INTO region (name, description) VALUES (?,?)"
-	_, err := connectdb.ConnMySql().Exec(query, &region.NAME, &region.DESC)
+	_, err := connectdb.Db.Exec(query, &region.NAME, &region.DESC)
 	if err != nil {
 		return nil, err
 	}
@@ -38,7 +38,7 @@ func InsertRegion(region *models.Region) (*models.Region, error) {
 func GetSingleRegion(id int) (models.Region, error) {
 	var region models.Region
 	query := "SELECT id, name, description FROM region WHERE id =?"
-	row := connectdb.ConnMySql().QueryRow(query, id)
+	row := connectdb.Db.QueryRow(query, id)
 	if err := row.Scan(&region.ID, &region.NAME, region.DESC); err != nil {
 		return region, nil
 	}
@@ -47,7 +47,7 @@ func GetSingleRegion(id int) (models.Region, error) {
 
 func UpdateRegion(region *models.Region) (*models.Region, error) {
 	query := "UPDATE region SET name =?, description=? WHERE id =?"
-	_, err := connectdb.ConnMySql().Exec(query, region.NAME, &region.DESC, region.ID)
+	_, err := connectdb.Db.Exec(query, region.NAME, &region.DESC, region.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +56,7 @@ func UpdateRegion(region *models.Region) (*models.Region, error) {
 
 func DeleteRegion(id int) error {
 	query := "DELETE FROM region WHERE id =?"
-	_, err := connectdb.ConnMySql().Exec(query, id)
+	_, err := connectdb.Db.Exec(query, id)
 	if err != nil {
 		return err
 	}

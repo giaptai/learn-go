@@ -1,19 +1,26 @@
 package myrouter
 
 import (
+	"fmt"
+	"net/http"
+
 	"firm.com/function"
 	"firm.com/models"
-	"fmt"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 func GetFirms(c *gin.Context) {
-	fmt.Print("ddd")
+	page := c.Query("page")
+	var pageInt int
+	if _, err := fmt.Sscan(page, &pageInt); err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return //finish function
+	}
 	var firms []models.VWFirm
-	firms, err := function.GetFirm()
+	firms, err := function.GetFirm(pageInt)
 	if err != nil {
-		fmt.Println(err.Error())
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
 	}
 	c.JSON(http.StatusOK, firms)
 }
@@ -21,7 +28,7 @@ func GetFirms(c *gin.Context) {
 func GetFirmById(c *gin.Context) {
 	id := c.Param("id") //get path variable
 	var intInt int
-	var firm models.VWFirm
+	var firm models.Firm
 	if _, err := fmt.Sscan(id, &intInt); err != nil {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return //finish function
@@ -35,16 +42,17 @@ func GetFirmById(c *gin.Context) {
 }
 
 func AddFirm(c *gin.Context) {
-	var firm models.VWFirm //create variable firm
+	var firm models.Firm //create variable firm
 	// Bind dữ liệu JSON từ request body vào struct firm
 	//get data from body then mapping to firm by reference
-	if err := c.BindJSON(&firm); err != nil {
+	if err := c.Bind(&firm); err != nil {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
 	_, err := function.InsertFirm(&firm)
 	if err != nil {
-		fmt.Println(err.Error())
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
 	}
 	c.JSON(200, firm)
 }

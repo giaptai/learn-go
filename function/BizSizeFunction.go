@@ -13,7 +13,7 @@ func GetBizSizes() ([]models.BizSize, error) {
 	// 	"left join firm AS f2 ON f2.id=f.holding_id"
 	var bizsizes []models.BizSize
 	query := "SELECT id, type, brief FROM biz_size" //string
-	rows, err := connectdb.ConnMySql().Query(query)
+	rows, err := connectdb.Db.Query(query)
 	if err != nil {
 		return nil, err
 	}
@@ -34,7 +34,7 @@ func GetBizSizes() ([]models.BizSize, error) {
 
 func InsertBizSize(bizsize *models.BizSize) (*models.BizSize, error) {
 	query := "INSERT INTO biz_size (type, brief) VALUES (?,?)"
-	_, err := connectdb.ConnMySql().Exec(query, &bizsize.TYPE, &bizsize.BRIEF)
+	_, err := connectdb.Db.Exec(query, &bizsize.TYPE, &bizsize.BRIEF)
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +44,7 @@ func InsertBizSize(bizsize *models.BizSize) (*models.BizSize, error) {
 func GetSingleBizSize(id int) (models.BizSize, error) {
 	var bizsize models.BizSize
 	query := "SELECT type, brief FROM biz_size WHERE id = ?"
-	row := connectdb.ConnMySql().QueryRow(query, id)
+	row := connectdb.Db.QueryRow(query, id)
 	if err := row.Scan(&bizsize.ID, &bizsize.TYPE, &bizsize.BRIEF); err != nil {
 		return bizsize, err
 	}
@@ -53,7 +53,7 @@ func GetSingleBizSize(id int) (models.BizSize, error) {
 
 func UpdateBizSize(bizsize *models.BizSize) (*models.BizSize, error) {
 	query := "UPDATE biz_size SET type = ?, brief=? WHERE id = ?"
-	_, err := connectdb.ConnMySql().Exec(query, bizsize.TYPE, bizsize.BRIEF, bizsize.ID)
+	_, err := connectdb.Db.Exec(query, bizsize.TYPE, bizsize.BRIEF, bizsize.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -62,7 +62,7 @@ func UpdateBizSize(bizsize *models.BizSize) (*models.BizSize, error) {
 
 func DeleteBizSize(id int) error {
 	query := "DELETE FROM biz_size WHERE id = ?"
-	_, err := connectdb.ConnMySql().Exec(query, id)
+	_, err := connectdb.Db.Exec(query, id)
 	if err != nil {
 		return err
 	}
